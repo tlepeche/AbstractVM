@@ -6,7 +6,7 @@
 #    By: sduprey <sduprey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/12/17 05:35:05 by sduprey           #+#    #+#              #
-#    Updated: 2017/02/18 00:23:52 by tlepeche         ###   ########.fr        #
+#    Updated: 2017/02/21 18:37:02 by tlepeche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ NAME = avm
 SRC = Factory.cpp \
 	  main.cpp \
 	  Instruction.cpp \
+	  Exception.cpp \
 
 SRCDIR = src/
 

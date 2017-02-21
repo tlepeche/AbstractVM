@@ -34,13 +34,13 @@ IOperand const * Factory::createInt8(std::string const & value) const
 { return new Operand<int8_t>(value, Int8, 0, this); }
 
 IOperand const * Factory::createInt16(std::string const & value) const
-{ return new Operand<int16_t>(value, Int16, 0, this); }
+{ return new Operand<int16_t>(value, Int16, 1, this); }
 
 IOperand const * Factory::createInt32(std::string const & value) const
-{ return new Operand<int32_t>(value, Int32, 0, this); }
+{ return new Operand<int32_t>(value, Int32, 2, this); }
 
 IOperand const * Factory::createFloat(std::string const & value) const
-{ return new Operand<float>(value, Float, 7, this); }
+{ return new Operand<float>(value, Float, 3, this); }
 
 IOperand const * Factory::createDouble(std::string const & value) const
-{ return new Operand<double>(value, Double, 7, this); }
+{ return new Operand<double>(value, Double, 4, this); }

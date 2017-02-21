@@ -6,7 +6,7 @@
 /*   By: tlepeche <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 21:31:49 by tlepeche          #+#    #+#             */
-/*   Updated: 2017/02/18 00:02:53 by tlepeche         ###   ########.fr       */
+/*   Updated: 2017/02/21 21:33:23 by tlepeche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 # define OPERAND_HPP
 
 #include <IOperand.hpp>
+#include <Exception.hpp>
 #include <limits.h>
 #include <sstream>
 #include <cfloat>
 #include <Factory.hpp>
+#include <iomanip>
 #include <math.h>
 
 template <typename T>
@@ -26,19 +28,21 @@ class Operand : public IOperand
 	public:
 		Operand(std::string value, eOperandType type, int precision, const Factory *factory):
 			_type(type), _precision(precision), _factory(factory)
-		{
-			long double tmp = std::stold(value);
-			//		if (hasOverflow(tmp, _type))
-			//			throw exception
-			T	val = static_cast<T>(tmp);
-	
-			std::stringstream	ss;
-			if (_type == Float || _type == Double)
-				ss << std::fixed << val;
-			else
-				ss << val;
-			ss >> _str;
-		}
+	{
+		long double tmp = std::stold(value);
+		if (hasOverflow(tmp, _type))
+			throw AVMException("Error : Overflow / Underflow during Operand creation");
+		T	val = static_cast<T>(tmp);
+
+		std::stringstream	ss;
+		if (_type == Float || _type == Double)
+			ss << std::setprecision(value.size()) << val;
+		else if (_type == Int8)
+			ss << static_cast<int>(val);
+		else
+			ss << val;
+		ss >> _str;
+	}
 
 		int				getPrecision() const { return _precision; }
 		eOperandType	getType() const { return _type; }
@@ -47,12 +51,13 @@ class Operand : public IOperand
 		IOperand const * operator+( IOperand const & rhs) const
 		{
 			std::stringstream ss;
-			eOperandType t = rhs.getType() > _type ? rhs.getType() : _type;
+			eOperandType t = rhs.getPrecision() > _precision ? rhs.getType() : _type;
 			long double res = std::stold(_str) + std::stold(rhs.toString());
-			//		if (hasOverflow(tmp, t))
-			//			throw exception
+			if (hasOverflow(res, t))
+				throw AVMException("Error : Overflow / Underflow during Operand creation");
+			int prec = _str.size() + rhs.toString().size(); 			
 			if (t == Float || t == Double)
-				ss << std::fixed << res;
+				ss << std::setprecision(prec) << res;
 			else
 				ss << res;
 			return (_factory->createOperand(t, ss.str()));
@@ -61,12 +66,13 @@ class Operand : public IOperand
 		IOperand const * operator-( IOperand const & rhs) const
 		{
 			std::stringstream ss;
-			eOperandType t = rhs.getType() > _type ? rhs.getType() : _type;
+			eOperandType t = rhs.getPrecision() > _precision ? rhs.getType() : _type;
 			long double res = std::stold(_str) - std::stold(rhs.toString());
-			//		if (hasOverflow(tmp, t))
-			//			throw exception
+			if (hasOverflow(res, t))
+				throw AVMException("Error : Overflow / Underflow during Operand creation");
+			int prec = _str.size() + rhs.toString().size(); 			
 			if (t == Float || t == Double)
-				ss << std::fixed << res;
+				ss << std::setprecision(prec) << res;
 			else
 				ss << res;
 			return (_factory->createOperand(t, ss.str()));
@@ -75,12 +81,13 @@ class Operand : public IOperand
 		IOperand const * operator*( IOperand const & rhs) const
 		{
 			std::stringstream ss;
-			eOperandType t = rhs.getType() > _type ? rhs.getType() : _type;
+			eOperandType t = rhs.getPrecision() > _precision ? rhs.getType() : _type;
 			long double res = std::stold(_str) * std::stold(rhs.toString());
-			//		if (hasOverflow(tmp, t))
-			//			throw exception
+			if (hasOverflow(res, t))
+				throw AVMException("Error : Overflow / Underflow during Operand creation");
+			int prec = _str.size() + rhs.toString().size(); 			
 			if (t == Float || t == Double)
-				ss << std::fixed << res;
+				ss << std::setprecision(prec) << res;
 			else
 				ss << res;
 			return (_factory->createOperand(t, ss.str()));
@@ -89,14 +96,13 @@ class Operand : public IOperand
 		IOperand const * operator/( IOperand const & rhs) const
 		{
 			std::stringstream ss;
-			eOperandType t = rhs.getType() > _type ? rhs.getType() : _type;
-			//			if (std::stold(rhs.toString()) == 0)
-			//				throw exception
+			eOperandType t = rhs.getPrecision() > _precision ? rhs.getType() : _type;
 			long double res = std::stold(_str) / std::stold(rhs.toString());
-			//		if (hasOverflow(tmp, t))
-			//			throw exception
+			if (hasOverflow(res, t))
+				throw AVMException("Error : Overflow / Underflow during Operand creation");
+			int prec = _str.size() + rhs.toString().size(); 			
 			if (t == Float || t == Double)
-				ss << std::fixed << res;
+				ss << std::setprecision(prec) << res;
 			else
 				ss << res;
 			return (_factory->createOperand(t, ss.str()));
@@ -105,20 +111,21 @@ class Operand : public IOperand
 		IOperand const * operator%( IOperand const & rhs) const
 		{
 			std::stringstream ss;
-			eOperandType t = rhs.getType() > _type ? rhs.getType() : _type;
-			//			if (std::stold(rhs.toString()) == 0)
-			//				throw exception
-			//			if (hasOverflow(tmp, t))
-			//				throw exception
+			eOperandType t = rhs.getPrecision() > _precision ? rhs.getType() : _type;
 			if (t == Float || t == Double)
 			{
 				long double res = fmod(std::stold(_str), std::stold(rhs.toString()));
-				ss << std::fixed << res;
+				int prec = _str.size() + rhs.toString().size();
+				ss << std::setprecision(prec) << res;
+				if (hasOverflow(res, t))
+					throw AVMException("Error : Overflow / Underflow during Operand creation");
 			}
 			else
 			{
 				long long res = std::stoll(_str) % std::stoll(rhs.toString());
 				ss << res;
+				if (hasOverflow(res, t))
+					throw AVMException("Error : Overflow / Underflow during Operand creation");
 			}
 			return (_factory->createOperand(t, ss.str()));
 		}
@@ -143,7 +150,7 @@ class Operand : public IOperand
 					return (r > FLT_MAX || r < -FLT_MAX);
 				case (Double):
 					return (r > DBL_MAX || r < -DBL_MAX);
-				break;
+					break;
 			}
 			return (true);
 		}

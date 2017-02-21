@@ -6,7 +6,7 @@
 /*   By: tlepeche <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 16:54:32 by tlepeche          #+#    #+#             */
-/*   Updated: 2017/02/18 00:25:43 by tlepeche         ###   ########.fr       */
+/*   Updated: 2017/02/21 21:09:11 by tlepeche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,15 @@ class Instruction
 	public:
 		Instruction();
 		~Instruction();
+
 		std::list<IOperand	const*>	getStack();
+		bool						getExit();
 		std::map<std::string, void (Instruction::*)(std::vector<std::string>::iterator &it)> getAction();
 		Factory					*getFactory();
+		
 		eOperandType			findType(std::string str);
-
 		void	exec(std::vector<std::string> token);
+		void	exit();
 
 	private:
 		void	push(std::vector<std::string>::iterator &it);
@@ -47,4 +50,5 @@ class Instruction
 		std::list<IOperand const*>	_stack;
 		std::map<std::string, void (Instruction::*)(std::vector<std::string>::iterator &it)> _action;
 		Factory					*_factory;
+		bool					_exit;
 };
