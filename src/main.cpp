@@ -16,13 +16,10 @@ std::string	analyse(std::string line)
 }
 
 
-void	parse_command(std::string strline, Instruction *Instr)
+void	lex_command(std::string strline, Instruction *Instr)
 {
 	if (strline.find(";;") < strline.size())
-	{
-		if (!(Instr->getExit()))
-			throw AVMException("Error : program must have an exit instruction");
-	}
+		return ;
 	strline = analyse(strline);
 	if (strline.empty())
 		return ;
@@ -48,19 +45,18 @@ void	exec_file(char *str)
 	{
 		try
 		{
-			parse_command(strline, Instr);
+			lex_command(strline, Instr);
 		}
 		catch (std::exception const &e)
 		{
 			std::cout << "Line " << line  << " : " << e.what() << " (" << strline << ")" << std::endl;
-			Instr->exit();
 			break;
 		}
 		line++;
 	}
-
 	if (file.is_open())
 		file.close();
+	Instr->exit();
 	delete Instr;
 }
 
@@ -69,23 +65,35 @@ void	exec_input()
 {
 	Instruction *Instr = new Instruction();
 	int	line = 1;
+	std::list<std::string> command;
 
 	std::string strline = "start";
-	while (strline.find(";;") > strline.size() != 0 && !(Instr->getExit()))
+	while (strline.find(";;") > strline.size() != 0)
 	{
 		getline(std::cin, strline);
+		command.push_back(strline);
+		line++;
+	}
+	int countdown = 1;
+	while (countdown < line - 1)
+	{
 		try
 		{
-			parse_command(strline, Instr);
+			lex_command((*command.begin()), Instr);
 		}
 		catch (std::exception const &e)
 		{
-			std::cout << "Line " << line  << " : " << e.what() << " (" << strline << ")" << std::endl;
+			std::stringstream ss;
+			ss <<  "Line " << countdown << " : " << e.what() << " (" << *command.begin() << ")";
 			Instr->exit();
-			break;
+			throw AVMException(ss.str());
 		}
-		line++;
+		command.pop_front();
+		countdown++;
 	}
+	Instr->exit();
+	if (!(Instr->getExit()))
+		throw AVMException("Error : program must have an exit instruction");
 }
 
 int main (int ac, char **av)
@@ -95,7 +103,16 @@ int main (int ac, char **av)
 		if (ac == 2)
 			exec_file(av[1]);
 		else
-			exec_input();
+		{
+			try
+			{
+				exec_input();
+			}
+			catch (std::exception const &e)
+			{
+				std::cout << e.what() << std::endl;
+			}
+		}
 	}
 	catch (std::exception const &e)
 	{

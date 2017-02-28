@@ -6,7 +6,7 @@
 /*   By: tlepeche <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 21:31:49 by tlepeche          #+#    #+#             */
-/*   Updated: 2017/02/21 21:33:23 by tlepeche         ###   ########.fr       */
+/*   Updated: 2017/02/28 21:34:16 by tlepeche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,21 +27,11 @@ class Operand : public IOperand
 {
 	public:
 		Operand(std::string value, eOperandType type, int precision, const Factory *factory):
-			_type(type), _precision(precision), _factory(factory)
+			_str(value), _type(type), _precision(precision), _factory(factory)
 	{
 		long double tmp = std::stold(value);
 		if (hasOverflow(tmp, _type))
 			throw AVMException("Error : Overflow / Underflow during Operand creation");
-		T	val = static_cast<T>(tmp);
-
-		std::stringstream	ss;
-		if (_type == Float || _type == Double)
-			ss << std::setprecision(value.size()) << val;
-		else if (_type == Int8)
-			ss << static_cast<int>(val);
-		else
-			ss << val;
-		ss >> _str;
 	}
 
 		int				getPrecision() const { return _precision; }
@@ -55,7 +45,7 @@ class Operand : public IOperand
 			long double res = std::stold(_str) + std::stold(rhs.toString());
 			if (hasOverflow(res, t))
 				throw AVMException("Error : Overflow / Underflow during Operand creation");
-			int prec = _str.size() + rhs.toString().size(); 			
+			int prec = _str.size() > rhs.toString().size() ? _str.size() : rhs.toString().size(); 			
 			if (t == Float || t == Double)
 				ss << std::setprecision(prec) << res;
 			else
@@ -70,7 +60,7 @@ class Operand : public IOperand
 			long double res = std::stold(_str) - std::stold(rhs.toString());
 			if (hasOverflow(res, t))
 				throw AVMException("Error : Overflow / Underflow during Operand creation");
-			int prec = _str.size() + rhs.toString().size(); 			
+			int prec = _str.size() > rhs.toString().size() ? _str.size() : rhs.toString().size(); 			
 			if (t == Float || t == Double)
 				ss << std::setprecision(prec) << res;
 			else
@@ -100,7 +90,7 @@ class Operand : public IOperand
 			long double res = std::stold(_str) / std::stold(rhs.toString());
 			if (hasOverflow(res, t))
 				throw AVMException("Error : Overflow / Underflow during Operand creation");
-			int prec = _str.size() + rhs.toString().size(); 			
+			int prec = _str.size() > rhs.toString().size() ? _str.size() : rhs.toString().size(); 			
 			if (t == Float || t == Double)
 				ss << std::setprecision(prec) << res;
 			else
@@ -115,7 +105,7 @@ class Operand : public IOperand
 			if (t == Float || t == Double)
 			{
 				long double res = fmod(std::stold(_str), std::stold(rhs.toString()));
-				int prec = _str.size() + rhs.toString().size();
+				int prec = _str.size() > rhs.toString().size() ? _str.size() : rhs.toString().size(); 			
 				ss << std::setprecision(prec) << res;
 				if (hasOverflow(res, t))
 					throw AVMException("Error : Overflow / Underflow during Operand creation");
