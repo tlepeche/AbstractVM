@@ -6,7 +6,7 @@
 /*   By: tlepeche <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 16:58:13 by tlepeche          #+#    #+#             */
-/*   Updated: 2017/02/28 21:38:49 by tlepeche         ###   ########.fr       */
+/*   Updated: 2017/03/01 19:25:48 by tlepeche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ void	Instruction::push(std::vector<std::string>::iterator &it)
 
 void	Instruction::pop(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (!(_stack.empty()))
 		_stack.pop_front();
 	else
@@ -115,6 +116,7 @@ void	Instruction::pop(std::vector<std::string>::iterator &it)
 
 void	Instruction::dump(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	for (std::list<IOperand const*>::iterator it = _stack.begin(); it != _stack.end(); ++it)
 	{
 		std::cout << (*it)->toString() << std::endl;
@@ -137,6 +139,7 @@ void	Instruction::assert(std::vector<std::string>::iterator &it)
 
 void	Instruction::add(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.size() < 2)
 		throw AVMException("Error : Stack has less than 2 values");
 	const IOperand *v1 = *(_stack.begin());
@@ -148,6 +151,7 @@ void	Instruction::add(std::vector<std::string>::iterator &it)
 
 void	Instruction::sub(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.size() < 2)
 		throw AVMException("Error : Stack has less than 2 values");
 	const IOperand *v1 = *(_stack.begin());
@@ -159,6 +163,7 @@ void	Instruction::sub(std::vector<std::string>::iterator &it)
 
 void	Instruction::mul(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.size() < 2)
 		throw AVMException("Error : Stack has less than 2 values");
 	const IOperand *v1 = *(_stack.begin());
@@ -171,6 +176,7 @@ void	Instruction::mul(std::vector<std::string>::iterator &it)
 
 void	Instruction::div(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.size() < 2)
 		throw AVMException("Error : Stack has less than 2 values");
 	if ((*_stack.begin())->toString() == "0")
@@ -185,6 +191,7 @@ void	Instruction::div(std::vector<std::string>::iterator &it)
 
 void	Instruction::mod(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.size() < 2)
 		throw AVMException("Error : Stack has less than 2 values");
 	if ((*_stack.begin())->toString() == "0")
@@ -198,6 +205,7 @@ void	Instruction::mod(std::vector<std::string>::iterator &it)
 
 void	Instruction::print(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	if (_stack.empty())
 		throw AVMException("Error : Stack is empty");
 	if ((*_stack.begin())->getType() != Int8)
@@ -211,6 +219,7 @@ void	Instruction::print(std::vector<std::string>::iterator &it)
 
 void	Instruction::exit(std::vector<std::string>::iterator &it)
 {
+	(void)it;
 	_exit = true;
 }
 

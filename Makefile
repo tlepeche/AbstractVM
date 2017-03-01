@@ -6,7 +6,7 @@
 #    By: sduprey <sduprey@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/12/17 05:35:05 by sduprey           #+#    #+#              #
-#    Updated: 2017/02/21 18:37:02 by tlepeche         ###   ########.fr        #
+#    Updated: 2017/03/01 19:24:14 by tlepeche         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ OBJDIR = obj/
 
 OBJ = $(SRC:%.cpp=$(OBJDIR)%.o)
 
-CC = clang++
+CC = clang++ -Werror -Wall -Wextra
 
 RM = rm -rf
 

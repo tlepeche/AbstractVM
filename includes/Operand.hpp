@@ -6,7 +6,7 @@
 /*   By: tlepeche <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/17 21:31:49 by tlepeche          #+#    #+#             */
-/*   Updated: 2017/02/28 21:34:16 by tlepeche         ###   ########.fr       */
+/*   Updated: 2017/03/01 19:24:59 by tlepeche         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class Operand : public IOperand
 {
 	public:
 		Operand(std::string value, eOperandType type, int precision, const Factory *factory):
-			_str(value), _type(type), _precision(precision), _factory(factory)
+			_type(type), _precision(precision), _factory(factory), _str(value)
 	{
 		long double tmp = std::stold(value);
 		if (hasOverflow(tmp, _type))
